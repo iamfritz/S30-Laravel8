@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
+class Member extends Model
+{
+    use HasFactory;
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'name', 'email',
+    ];
+
+    public function roles() {
+
+        return $this->belongsToMany(Role::class,'member_roles','member_id');
+        
+    }
+}
