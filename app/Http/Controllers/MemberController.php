@@ -21,7 +21,7 @@ class MemberController extends Controller
         $return = $this->return;
         
         if($request->role) {
-            $roles    = array_map('trim', explode(',', $request->role));
+            $roles   = $request->role;
             $roleIds = Role::select('id')->whereIn('slug',$roles)->pluck('id');
             $members = Member::with('roles')->whereHas(
                 'roles', function($q) use ($roleIds) {
@@ -30,8 +30,16 @@ class MemberController extends Controller
             )->get();
             
         } else {
+            $members = Member::select('id','name','email')->with('roles')->get();
             $members = Member::with('roles')->get();
         }
+
+        $members = $members->map(function ($member) {
+                $roles = $member->roles->pluck('name')->toArray();
+                $memberData = $member->toArray();
+                $memberData['roles'] = $roles;
+                return $memberData;
+            });
 
         if($members) {
             $return["status"]   = 'success';
