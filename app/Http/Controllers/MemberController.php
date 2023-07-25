@@ -52,7 +52,7 @@ class MemberController extends Controller
         $validator = Validator::make($request->all(),[
             'name' => 'required|string',
             'email' => 'required|email|unique:members,email',
-            'role' => 'required|string'
+            'role' => 'required|array'
         ]);
 
         if($validator->fails()){
@@ -60,7 +60,7 @@ class MemberController extends Controller
             return response()->json($return, 400);                
         }        
 
-        $roles      = array_map('trim', explode(',', $request->role));
+        $roles      = $request->role;
         $memberData = $request->only(['name', 'email']);
         $member     = Member::create($memberData);        
 
@@ -108,7 +108,7 @@ class MemberController extends Controller
         $validator = Validator::make($request->all(),[
             'name' => 'required|string',
             'email' => 'required|email|unique:members,email,' . $member->id,
-            'role' => 'string'
+            'role' => 'array'
         ]);
 
         if($validator->fails()){
@@ -116,7 +116,7 @@ class MemberController extends Controller
             return response()->json($return, 400);                
         }        
 
-        $roles      = array_map('trim', explode(',', $request->role));
+        $roles      = $request->role;
         $memberData = $request->only(['name', 'email']);
 
         $member->update($memberData);                     
